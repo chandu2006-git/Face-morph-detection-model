@@ -1,50 +1,41 @@
-from tensorflow.keras.models import load_model
+from tensorflow.keras.applications import InceptionV3
+from tensorflow.keras.layers import Dense, GlobalAveragePooling2D
+from tensorflow.keras.models import Model
 import numpy as np
 from PIL import Image
 import os
-import requests
 import gdown
 
+# 🔥 Build model
+def build_model():
+    base_model = InceptionV3(
+        weights=None,
+        include_top=False,
+        input_shape=(224, 224, 3)
+    )
 
-print("🚀 Starting model service...")
+    x = base_model.output
+    x = GlobalAveragePooling2D()(x)
+    x = Dense(256, activation='relu')(x)
+    output = Dense(1, activation='sigmoid')(x)
 
-MODEL_PATH = "model.h5"
+    model = Model(inputs=base_model.input, outputs=output)
+    return model
 
-if not os.path.exists(MODEL_PATH):
-    print("⬇️ Downloading model...")
+model = build_model()
 
-    url = "https://drive.google.com/uc?id=11-gMkZkul3OYVLhl6ygIpzjg-PStnkeI"
-    gdown.download(url, MODEL_PATH, quiet=False)
+# 🔥 Download weights
+WEIGHTS_PATH = "weights.h5"
 
-    print("✅ Model downloaded")
+if not os.path.exists(WEIGHTS_PATH):
+    print("⬇️ Downloading weights...")
 
-print("📦 Loading model now...")
-model = load_model(MODEL_PATH)
-print("✅ Model fully loaded")
-print("✅ Full model loaded")
+    url = "YOUR_WEIGHTS_LINK"   # <-- replace this
+    gdown.download(url, WEIGHTS_PATH, quiet=False)
 
-# 🔥 Preprocess
-def preprocess(image):
-    image = image.resize((224, 224))
-    image = np.array(image) / 255.0
-    image = np.expand_dims(image, axis=0)
-    return image
+    print("✅ Weights downloaded")
 
-# 🔥 Predict
-def predict_image(file):
-    image = Image.open(file).convert("RGB")
-    processed = preprocess(image)
+# 🔥 Load weights
+model.load_weights(WEIGHTS_PATH)
 
-    prediction = model.predict(processed)[0][0]
-
-    if prediction >= 0.5:
-        label = "Morph"
-    else:
-        label = "Real"
-
-    return {
-        "prediction": label,
-        "confidence": float(prediction),
-        "real_prob": float(1 - prediction),
-        "morph_prob": float(prediction)
-    }
+print("✅ Model ready for inference")
