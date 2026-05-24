@@ -6,7 +6,10 @@ from PIL import Image
 import os
 import gdown
 
-# 🔥 Build model
+# 🔥 Global model variable
+model = None
+
+# 🔥 Build architecture
 def build_model():
     base_model = InceptionV3(
         weights=None,
@@ -22,20 +25,58 @@ def build_model():
     model = Model(inputs=base_model.input, outputs=output)
     return model
 
-model = build_model()
 
-# 🔥 Download weights
-WEIGHTS_PATH = "weights.h5"
+# 🔥 Lazy load model
+def get_model():
+    global model
 
-if not os.path.exists(WEIGHTS_PATH):
-    print("⬇️ Downloading weights...")
+    if model is None:
+        print("🚀 Initializing model...")
 
-    url = "YOUR_WEIGHTS_LINK"   # <-- replace this
-    gdown.download(url, WEIGHTS_PATH, quiet=False)
+        model = build_model()
 
-    print("✅ Weights downloaded")
+        WEIGHTS_PATH = "weights.h5"
 
-# 🔥 Load weights
-model.load_weights(WEIGHTS_PATH)
+        if not os.path.exists(WEIGHTS_PATH):
+            print("⬇️ Downloading weights...")
 
-print("✅ Model ready for inference")
+            url = "https://drive.google.com/uc?id=1yLEYFHtPmInxoQOm10YweX0tKRjnlr02"
+            gdown.download(url, WEIGHTS_PATH, quiet=False)
+
+            print("✅ Weights downloaded")
+
+        model.load_weights(WEIGHTS_PATH)
+
+        print("✅ Model ready for inference")
+
+    return model
+
+
+# 🔥 Preprocess image
+def preprocess(image):
+    image = image.resize((224, 224))
+    image = np.array(image) / 255.0
+    image = np.expand_dims(image, axis=0)
+    return image
+
+
+# 🔥 Prediction function
+def predict_image(file):
+    model = get_model()
+
+    image = Image.open(file).convert("RGB")
+    processed = preprocess(image)
+
+    prediction = model.predict(processed)[0][0]
+
+    if prediction >= 0.5:
+        label = "Morph"
+    else:
+        label = "Real"
+
+    return {
+        "prediction": label,
+        "confidence": float(prediction),
+        "real_prob": float(1 - prediction),
+        "morph_prob": float(prediction)
+    }
