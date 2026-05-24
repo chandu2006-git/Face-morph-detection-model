@@ -1,6 +1,5 @@
 from flask import Blueprint, request, jsonify
-from services.model_service import predict_image
-
+from backend.services.model_service import predict_image
 predict_bp = Blueprint("predict", __name__)
 
 @predict_bp.route("/predict", methods=["POST"])   # 🔥 THIS IS IMPORTANT
