@@ -6,6 +6,8 @@ import requests
 import gdown
 
 
+print("🚀 Starting model service...")
+
 MODEL_PATH = "model.h5"
 
 if not os.path.exists(MODEL_PATH):
@@ -16,8 +18,9 @@ if not os.path.exists(MODEL_PATH):
 
     print("✅ Model downloaded")
 
+print("📦 Loading model now...")
 model = load_model(MODEL_PATH)
-
+print("✅ Model fully loaded")
 print("✅ Full model loaded")
 
 # 🔥 Preprocess
