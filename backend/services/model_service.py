@@ -1,5 +1,5 @@
 from tensorflow.keras.applications import InceptionV3
-from tensorflow.keras.layers import Dense, GlobalAveragePooling2D
+from tensorflow.keras.layers import Dense, GlobalAveragePooling2D, Dropout
 from tensorflow.keras.models import Model
 import numpy as np
 from PIL import Image
@@ -12,61 +12,61 @@ def build_model():
     base_model = InceptionV3(
         weights=None,
         include_top=False,
-        input_shape=(299, 299, 3)   # ✅ CORRECT
+        input_shape=(299, 299, 3)
     )
 
     x = base_model.output
     x = GlobalAveragePooling2D()(x)
-    x = Dense(256, activation='relu')(x)   # must match training
+    x = Dense(256, activation='relu')(x)
     x = Dropout(0.5)(x)
     output = Dense(1, activation='sigmoid')(x)
-     
+
     return Model(inputs=base_model.input, outputs=output)
+
 
 def get_model():
     global model
 
     if model is None:
-        print("🚀 Loading model...")
+        print("🚀 Lazy loading model...")
 
-        try:
-            model = build_model()
+        model = build_model()
 
-            WEIGHTS_PATH = "final_weights.weights.h5"
+        WEIGHTS_PATH = "final_weights.weights.h5"
 
-            if not os.path.exists(WEIGHTS_PATH):
-                print("⬇️ Downloading weights...")
-                url = "https://drive.google.com/uc?id=1yLEYFHtPmInxoQOm10YweX0tKRjnlr02"
-                gdown.download(url, WEIGHTS_PATH, quiet=False)
+        if not os.path.exists(WEIGHTS_PATH):
+            print("⬇️ Downloading weights...")
+            url = "https://drive.google.com/uc?id=1yLEYFHtPmInxoQOm10YweX0tKRjnlr02"
+            gdown.download(url, WEIGHTS_PATH, quiet=False)
 
-            model.load_weights(WEIGHTS_PATH)
-
-            print("✅ Model ready")
-
-        except Exception as e:
-            print("❌ MODEL LOAD ERROR:", str(e))
-            raise e   # IMPORTANT
+        model.load_weights(WEIGHTS_PATH)
+        print("✅ Model ready")
 
     return model
-print("📁 Checking file exists:", os.path.exists(WEIGHTS_PATH))
+
 
 def preprocess(image):
-    image = image.resize((299, 299))   # ✅ CORRECT
+    image = image.resize((299, 299))
     image = np.array(image) / 255.0
     return np.expand_dims(image, axis=0)
 
 
 def predict_image(file):
-    model = get_model()
+    try:
+        model = get_model()
 
-    image = Image.open(file).convert("RGB")
-    processed = preprocess(image)
+        image = Image.open(file).convert("RGB")
+        processed = preprocess(image)
 
-    prediction = model.predict(processed)[0][0]
+        prediction = model.predict(processed)[0][0]
 
-    return {
-        "prediction": "Morph" if prediction >= 0.5 else "Real",
-        "confidence": float(prediction),
-        "real_prob": float(1 - prediction),
-        "morph_prob": float(prediction)
-    }
+        return {
+            "prediction": "Morph" if prediction >= 0.5 else "Real",
+            "confidence": float(prediction),
+            "real_prob": float(1 - prediction),
+            "morph_prob": float(prediction)
+        }
+
+    except Exception as e:
+        print("❌ Prediction error:", str(e))
+        return {"error": str(e)}
