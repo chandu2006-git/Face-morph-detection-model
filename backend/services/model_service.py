@@ -8,11 +8,16 @@ MODEL_PATH = "model.h5"
 
 if not os.path.exists(MODEL_PATH):
     print("⬇️ Downloading model...")
+
     url = "https://drive.google.com/uc?export=download&id=11-gMkZkul3OYVLhl6ygIpzjg-PStnkeI"
-    
-    r = requests.get(url)
+
+    session = requests.Session()
+    response = session.get(url, stream=True)
+
     with open(MODEL_PATH, "wb") as f:
-        f.write(r.content)
+        for chunk in response.iter_content(1024):
+            if chunk:
+                f.write(chunk)
 
     print("✅ Model downloaded")
 
