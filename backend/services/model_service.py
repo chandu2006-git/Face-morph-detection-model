@@ -21,21 +21,34 @@ print("Loading model...")
 model = load_model(MODEL_PATH, compile=False)
 print("Model loaded successfully ✅")
 
-
 def predict_image(file):
-    img = Image.open(file).convert("RGB")
-    img = img.resize((299, 299))
+    try:
+        print("📸 Opening image...")
 
-    img = np.array(img) / 255.0
-    img = np.expand_dims(img, axis=0)
+        from PIL import Image
+        import numpy as np
 
-    pred = model.predict(img)[0][0]
+        img = Image.open(file).convert("RGB")
+        img = img.resize((299, 299))
 
-    print("PRED:", pred)
+        print("🧠 Preprocessing...")
 
-    return {
-        "prediction": "Morph" if pred > 0.5 else "Real",
-        "confidence": float(pred),
-        "real_prob": float(1 - pred),
-        "morph_prob": float(pred)
-    }
+        img = np.array(img) / 255.0
+        img = np.expand_dims(img, axis=0)
+
+        print("🤖 Predicting...")
+
+        pred = model.predict(img)[0][0]
+
+        print("✅ Prediction:", pred)
+
+        return {
+            "prediction": "Morph" if pred > 0.5 else "Real",
+            "confidence": float(pred),
+            "real_prob": float(1 - pred),
+            "morph_prob": float(pred)
+        }
+
+    except Exception as e:
+        print("🔥 MODEL ERROR:", str(e))
+        raise e
