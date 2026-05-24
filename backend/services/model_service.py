@@ -17,8 +17,10 @@ if not os.path.exists(MODEL_PATH):
 
     print("Model downloaded ✅")
 
-# 🔥 LOAD MODEL
-model = load_model(MODEL_PATH)
+# 🔥 LOAD MODEL (FIXED)
+print("Loading model...")
+model = load_model(MODEL_PATH, compile=False)
+print("Model loaded successfully ✅")
 
 
 def predict_image(file):
@@ -29,6 +31,8 @@ def predict_image(file):
     img = np.expand_dims(img, axis=0)
 
     pred = model.predict(img)[0][0]
+
+    print("PRED:", pred)  # 🔥 debug
 
     return {
         "prediction": "Morph" if pred > 0.5 else "Real",
