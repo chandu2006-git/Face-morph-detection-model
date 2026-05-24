@@ -4,20 +4,20 @@ from tensorflow.keras.models import load_model
 import numpy as np
 from PIL import Image
 
-MODEL_PATH = "model/final_clean_model.h5"
+MODEL_PATH = "model/inception_model_v1.keras"
 
-# 🔥 DOWNLOAD MODEL IF NOT EXISTS
+# 🔥 DOWNLOAD MODEL
 if not os.path.exists(MODEL_PATH):
     print("Downloading model from Drive...")
 
-    url = "https://drive.google.com/uc?id=1WLBiDHVG0xoWuOSAGHWY3elVmlLeCFpB"
+    url = "https://drive.google.com/uc?id=13IzkkGMkkTQrk5JFhyiGZo42AwaINSzc"
 
     os.makedirs("model", exist_ok=True)
     gdown.download(url, MODEL_PATH, quiet=False)
 
     print("Model downloaded ✅")
 
-# 🔥 LOAD MODEL (FIXED)
+# 🔥 LOAD MODEL
 print("Loading model...")
 model = load_model(MODEL_PATH, compile=False)
 print("Model loaded successfully ✅")
@@ -32,7 +32,7 @@ def predict_image(file):
 
     pred = model.predict(img)[0][0]
 
-    print("PRED:", pred)  # 🔥 debug
+    print("PRED:", pred)
 
     return {
         "prediction": "Morph" if pred > 0.5 else "Real",
