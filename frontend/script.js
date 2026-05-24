@@ -138,7 +138,7 @@ window.onload = () => {
       confidenceValue.innerText = current.toFixed(1) + "%";
     }, 25);
   }
-  
+  loadAccuracyChart();
 };
 function loadAccuracyChart() {
 

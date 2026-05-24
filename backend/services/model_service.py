@@ -14,7 +14,7 @@ def build_model():
     base_model = InceptionV3(
         weights=None,
         include_top=False,
-        input_shape=(224, 224, 3)
+        input_shape=(229, 229, 3)
     )
 
     x = base_model.output
@@ -54,7 +54,7 @@ def get_model():
 
 # 🔥 Preprocess image
 def preprocess(image):
-    image = image.resize((224, 224))
+    image = image.resize((229, 229))
     image = np.array(image) / 255.0
     image = np.expand_dims(image, axis=0)
     return image
