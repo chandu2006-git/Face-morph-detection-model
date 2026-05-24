@@ -18,8 +18,9 @@ def build_model():
     x = base_model.output
     x = GlobalAveragePooling2D()(x)
     x = Dense(256, activation='relu')(x)   # must match training
+    x = Dropout(0.5)(x)
     output = Dense(1, activation='sigmoid')(x)
-
+     
     return Model(inputs=base_model.input, outputs=output)
 
 
