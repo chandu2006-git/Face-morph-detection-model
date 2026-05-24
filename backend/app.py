@@ -1,16 +1,15 @@
-from flask import Flask, render_template
-from backend.routes.predict import predict_bp
+from flask import Flask
 from flask_cors import CORS
+from backend.routes.predict import predict_bp
 
-app = Flask(__name__, 
-            template_folder="../templates", 
-            static_folder="../static")
+app = Flask(__name__)
 
-CORS(app, resources={r"/*": {"origins": "*"}})  #  FULL ACCESS
+# 🔥 VERY IMPORTANT — PLACE HERE (TOP)
+CORS(app, resources={r"/*": {"origins": "*"}})
 
-# Register API
+# Register routes AFTER CORS
 app.register_blueprint(predict_bp)
 
-@app.route('/')
+@app.route("/")
 def home():
-    return "MorphGuard API is running 🚀"
+    return "API Running ✅"
