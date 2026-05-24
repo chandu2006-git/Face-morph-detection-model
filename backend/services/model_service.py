@@ -1,72 +1,38 @@
-from tensorflow.keras.applications import InceptionV3
-from tensorflow.keras.layers import Dense, GlobalAveragePooling2D, Dropout
-from tensorflow.keras.models import Model
-import numpy as np
-from PIL import Image
 import os
 import gdown
+from tensorflow.keras.models import load_model
+import numpy as np
+from PIL import Image
 
-model = None
+MODEL_PATH = "model/final_clean_model.h5"
 
-def build_model():
-    base_model = InceptionV3(
-        weights=None,
-        include_top=False,
-        input_shape=(299, 299, 3)
-    )
+# 🔥 DOWNLOAD MODEL IF NOT EXISTS
+if not os.path.exists(MODEL_PATH):
+    print("Downloading model from Drive...")
 
-    x = base_model.output
-    x = GlobalAveragePooling2D()(x)
-    x = Dense(256, activation='relu')(x)
-    x = Dropout(0.5)(x)
-    output = Dense(1, activation='sigmoid')(x)
+    url = "https://drive.google.com/uc?id=1WLBiDHVG0xoWuOSAGHWY3elVmlLeCFpB"
 
-    return Model(inputs=base_model.input, outputs=output)
+    os.makedirs("model", exist_ok=True)
+    gdown.download(url, MODEL_PATH, quiet=False)
 
+    print("Model downloaded ✅")
 
-def get_model():
-    global model
-
-    if model is None:
-        print("🚀 Lazy loading model...")
-
-        model = build_model()
-
-        WEIGHTS_PATH = "final_weights.weights.h5"
-
-        if not os.path.exists(WEIGHTS_PATH):
-            print("⬇️ Downloading weights...")
-            url = "https://drive.google.com/uc?id=1yLEYFHtPmInxoQOm10YweX0tKRjnlr02"
-            gdown.download(url, WEIGHTS_PATH, quiet=False)
-
-        model.load_weights(WEIGHTS_PATH)
-        print("✅ Model ready")
-
-    return model
-
-
-def preprocess(image):
-    image = image.resize((299, 299))
-    image = np.array(image) / 255.0
-    return np.expand_dims(image, axis=0)
+# 🔥 LOAD MODEL
+model = load_model(MODEL_PATH)
 
 
 def predict_image(file):
-    try:
-        model = get_model()
+    img = Image.open(file).convert("RGB")
+    img = img.resize((299, 299))
 
-        image = Image.open(file).convert("RGB")
-        processed = preprocess(image)
+    img = np.array(img) / 255.0
+    img = np.expand_dims(img, axis=0)
 
-        prediction = model.predict(processed)[0][0]
+    pred = model.predict(img)[0][0]
 
-        return {
-            "prediction": "Morph" if prediction >= 0.5 else "Real",
-            "confidence": float(prediction),
-            "real_prob": float(1 - prediction),
-            "morph_prob": float(prediction)
-        }
-
-    except Exception as e:
-        print("❌ Prediction error:", str(e))
-        return {"error": str(e)}
+    return {
+        "prediction": "Morph" if pred > 0.5 else "Real",
+        "confidence": float(pred),
+        "real_prob": float(1 - pred),
+        "morph_prob": float(pred)
+    }
