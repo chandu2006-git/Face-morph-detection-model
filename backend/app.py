@@ -1,5 +1,5 @@
 from flask import Flask, render_template
-from routes.predict import predict_bp
+from backend.routes.predict import predict_bp
 from flask import Flask, render_template
 from flask_cors import CORS
 
