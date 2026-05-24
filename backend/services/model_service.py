@@ -32,7 +32,8 @@ def get_model():
 
         model = build_model()
 
-        WEIGHTS_PATH = "weights.h5"
+        WEIGHTS_PATH = "final_weights.weights.h5"
+        gdown.download(url, WEIGHTS_PATH, quiet=False)
 
         if not os.path.exists(WEIGHTS_PATH):
             print("⬇️ Downloading weights...")
@@ -45,7 +46,7 @@ def get_model():
 
     return model
 
-
+print("📁 Checking file exists:", os.path.exists(WEIGHTS_PATH))
 def preprocess(image):
     image = image.resize((299, 299))   # ✅ CORRECT
     image = np.array(image) / 255.0
