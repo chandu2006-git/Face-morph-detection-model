@@ -1,52 +1,31 @@
-from tensorflow.keras.applications import InceptionV3
-from tensorflow.keras.layers import Dense, GlobalAveragePooling2D
-from tensorflow.keras.models import Model
+from tensorflow.keras.models import load_model
 import numpy as np
 from PIL import Image
 import os
 import gdown
 
-# 🔥 Global model variable
+# 🔥 Global model
 model = None
 
-# 🔥 Build architecture
-def build_model():
-    base_model = InceptionV3(
-        weights=None,
-        include_top=False,
-        input_shape=(229, 229, 3)
-    )
-
-    x = base_model.output
-    x = GlobalAveragePooling2D()(x)
-    x = Dense(256, activation='relu')(x)
-    output = Dense(1, activation='sigmoid')(x)
-
-    model = Model(inputs=base_model.input, outputs=output)
-    return model
-
-
-# 🔥 Lazy load model
+# 🔥 Lazy load full model
 def get_model():
     global model
 
     if model is None:
         print("🚀 Initializing model...")
 
-        model = build_model()
+        MODEL_PATH = "model.h5"
 
-        WEIGHTS_PATH = "weights.h5"
+        if not os.path.exists(MODEL_PATH):
+            print("⬇️ Downloading model...")
 
-        if not os.path.exists(WEIGHTS_PATH):
-            print("⬇️ Downloading weights...")
+            url = "https://drive.google.com/uc?id=11-gMkZkul3OYVLhl6ygIpzjg-PStnkeI"
+            gdown.download(url, MODEL_PATH, quiet=False)
 
-            url = "https://drive.google.com/uc?id=1yLEYFHtPmInxoQOm10YweX0tKRjnlr02"
-            gdown.download(url, WEIGHTS_PATH, quiet=False)
+            print("✅ Model downloaded")
 
-            print("✅ Weights downloaded")
-
-        model.load_weights(WEIGHTS_PATH)
-
+        print("📦 Loading model...")
+        model = load_model(MODEL_PATH)
         print("✅ Model ready for inference")
 
     return model
@@ -54,7 +33,7 @@ def get_model():
 
 # 🔥 Preprocess image
 def preprocess(image):
-    image = image.resize((229, 229))
+    image = image.resize((299, 299))   # ✅ IMPORTANT
     image = np.array(image) / 255.0
     image = np.expand_dims(image, axis=0)
     return image
