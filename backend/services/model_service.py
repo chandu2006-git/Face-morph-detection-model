@@ -4,6 +4,7 @@ from tensorflow.keras.models import Model
 import numpy as np
 from PIL import Image
 import os
+import requests
 
 # 🔥 Build model
 def build_model():
@@ -21,18 +22,27 @@ def build_model():
     model = Model(inputs=base_model.input, outputs=output)
     return model
 
-# 🔥 Build model
+# 🔥 Initialize model
 model = build_model()
 
-# 🔥 Absolute path fix
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-MODEL_PATH = os.path.join(BASE_DIR, "../../model/final_weights.weights.h5")
+# 🔥 Download model if not exists
+MODEL_PATH = "model.h5"
 
+if not os.path.exists(MODEL_PATH):
+    print("⬇️ Downloading model...")
+    url = "https://drive.google.com/uc?export=download&id=1yLEYFHtPmInxoQOm10YweX0tKRjnlr02"
+    
+    r = requests.get(url)
+    with open(MODEL_PATH, "wb") as f:
+        f.write(r.content)
+
+    print("✅ Model downloaded")
+
+# 🔥 Load weights
 model.load_weights(MODEL_PATH)
 
 print("✅ Model ready for inference")
 
-print("✅ Model ready for inference")
 
 # 🔥 Preprocess
 def preprocess(image):
