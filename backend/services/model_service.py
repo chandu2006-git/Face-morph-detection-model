@@ -23,30 +23,33 @@ def build_model():
      
     return Model(inputs=base_model.input, outputs=output)
 
-
 def get_model():
     global model
 
     if model is None:
         print("🚀 Loading model...")
 
-        model = build_model()
+        try:
+            model = build_model()
 
-        WEIGHTS_PATH = "final_weights.weights.h5"
-        gdown.download(url, WEIGHTS_PATH, quiet=False)
+            WEIGHTS_PATH = "final_weights.weights.h5"
 
-        if not os.path.exists(WEIGHTS_PATH):
-            print("⬇️ Downloading weights...")
-            url = "https://drive.google.com/uc?id=1yLEYFHtPmInxoQOm10YweX0tKRjnlr02"
-            gdown.download(url, WEIGHTS_PATH, quiet=False)
-            print("✅ Weights downloaded")
+            if not os.path.exists(WEIGHTS_PATH):
+                print("⬇️ Downloading weights...")
+                url = "https://drive.google.com/uc?id=1yLEYFHtPmInxoQOm10YweX0tKRjnlr02"
+                gdown.download(url, WEIGHTS_PATH, quiet=False)
 
-        model.load_weights(WEIGHTS_PATH)
-        print("✅ Model ready")
+            model.load_weights(WEIGHTS_PATH)
+
+            print("✅ Model ready")
+
+        except Exception as e:
+            print("❌ MODEL LOAD ERROR:", str(e))
+            raise e   # IMPORTANT
 
     return model
-
 print("📁 Checking file exists:", os.path.exists(WEIGHTS_PATH))
+
 def preprocess(image):
     image = image.resize((299, 299))   # ✅ CORRECT
     image = np.array(image) / 255.0
