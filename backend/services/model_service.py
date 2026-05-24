@@ -3,21 +3,16 @@ import numpy as np
 from PIL import Image
 import os
 import requests
+import gdown
+
 
 MODEL_PATH = "model.h5"
 
 if not os.path.exists(MODEL_PATH):
     print("⬇️ Downloading model...")
 
-    url = "https://drive.google.com/uc?export=download&id=11-gMkZkul3OYVLhl6ygIpzjg-PStnkeI"
-
-    session = requests.Session()
-    response = session.get(url, stream=True)
-
-    with open(MODEL_PATH, "wb") as f:
-        for chunk in response.iter_content(1024):
-            if chunk:
-                f.write(chunk)
+    url = "https://drive.google.com/uc?id=11-gMkZkul3OYVLhl6ygIpzjg-PStnkeI"
+    gdown.download(url, MODEL_PATH, quiet=False)
 
     print("✅ Model downloaded")
 
