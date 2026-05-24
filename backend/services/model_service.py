@@ -4,14 +4,13 @@ from tensorflow.keras.models import load_model
 import numpy as np
 from PIL import Image
 
-MODEL_PATH = "model/inception_model_v1.keras"
+MODEL_PATH = "model/final_render_model.h5"
 
 # 🔥 DOWNLOAD MODEL
 if not os.path.exists(MODEL_PATH):
     print("Downloading model from Drive...")
 
-    url = "https://drive.google.com/uc?id=13IzkkGMkkTQrk5JFhyiGZo42AwaINSzc"
-
+    url = "https://drive.google.com/uc?id=1gc3nQRwg2tPbdCeH3YKIoAobWTHW3lZ9"
     os.makedirs("model", exist_ok=True)
     gdown.download(url, MODEL_PATH, quiet=False)
 
