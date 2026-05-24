@@ -1,36 +1,14 @@
-from tensorflow.keras.applications import InceptionV3
-from tensorflow.keras.layers import Dense, GlobalAveragePooling2D
-from tensorflow.keras.models import Model
+from tensorflow.keras.models import load_model
 import numpy as np
 from PIL import Image
 import os
 import requests
 
-# 🔥 Build model
-def build_model():
-    base_model = InceptionV3(
-        weights=None,
-        include_top=False,
-        input_shape=(224, 224, 3)
-    )
-
-    x = base_model.output
-    x = GlobalAveragePooling2D()(x)
-    x = Dense(256, activation='relu')(x)
-    output = Dense(1, activation='sigmoid')(x)
-
-    model = Model(inputs=base_model.input, outputs=output)
-    return model
-
-# 🔥 Initialize model
-model = build_model()
-
-# 🔥 Download model if not exists
 MODEL_PATH = "model.h5"
 
 if not os.path.exists(MODEL_PATH):
     print("⬇️ Downloading model...")
-    url = "https://drive.google.com/uc?export=download&id=1yLEYFHtPmInxoQOm10YweX0tKRjnlr02"
+    url = "https://drive.google.com/uc?export=download&id=11-gMkZkul3OYVLhl6ygIpzjg-PStnkeI"
     
     r = requests.get(url)
     with open(MODEL_PATH, "wb") as f:
@@ -38,11 +16,9 @@ if not os.path.exists(MODEL_PATH):
 
     print("✅ Model downloaded")
 
-# 🔥 Load weights
-model.load_weights(MODEL_PATH)
+model = load_model(MODEL_PATH)
 
-print("✅ Model ready for inference")
-
+print("✅ Full model loaded")
 
 # 🔥 Preprocess
 def preprocess(image):
