@@ -64,7 +64,7 @@ window.onload = () => {
       const formData = new FormData();
       formData.append("file", selectedFile);
 
-      const res = await fetch("http://127.0.0.1:5000/predict", {
+      const res = await fetch("https://face-morph-detection-model.onrender.com/predict", {
         method: "POST",
         body: formData
       });
@@ -90,13 +90,9 @@ window.onload = () => {
 
     const morph = data.morph_prob ?? data.confidence;
     const real = data.real_prob ?? (1 - morph);
-    renderDonut(morph, real);
 
-    // update center text
-    document.getElementById("donutPercent").innerText =
-      (Math.max(morph, real) * 100).toFixed(1) + "%";
     let mainVal, color;
-    
+
     if (data.prediction === "Morph") {
       resultLabel.innerText = "MORPH DETECTED ❌";
       mainVal = morph;
@@ -142,7 +138,7 @@ window.onload = () => {
       confidenceValue.innerText = current.toFixed(1) + "%";
     }, 25);
   }
-  loadAccuracyChart();
+  
 };
 function loadAccuracyChart() {
 
@@ -232,33 +228,4 @@ function loadAccuracyChart() {
   });
 
   console.log("🔥 Premium Chart Loaded");
-}
-let donutChart = null;
-
-function renderDonut(morph, real) {
-
-  const ctx = document.getElementById("donutChart").getContext("2d");
-
-  if (donutChart) {
-    donutChart.destroy(); // reset
-  }
-
-  donutChart = new Chart(ctx, {
-    type: "doughnut",
-    data: {
-      labels: ["Real", "Morph"],
-      datasets: [{
-        data: [real, morph],
-        backgroundColor: ["#22c55e", "#ef4444"],
-        borderWidth: 0
-      }]
-    },
-    options: {
-      cutout: "70%",
-      responsive: true,
-      plugins: {
-        legend: { display: false }
-      }
-    }
-  });
 }
