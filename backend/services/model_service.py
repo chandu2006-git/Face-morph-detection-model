@@ -27,7 +27,10 @@ def load_my_model():
             MODEL_PATH,
             compile=False,
             safe_mode=False,
-            custom_objects={"BatchNormalization": BatchNormalization}
+             custom_objects={
+                 "BatchNormalization": BatchNormalization,
+                 "keras.layers.BatchNormalization": BatchNormalization
+    }
         )
         print("✅ Model loaded")
 
