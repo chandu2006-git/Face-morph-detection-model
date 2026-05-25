@@ -3,9 +3,10 @@ import gdown
 import numpy as np
 from PIL import Image
 from tensorflow.keras.models import load_model
+from tensorflow.keras.layers import BatchNormalization  # 🔥 ADD THIS
 from backend.config import MODEL_PATH, MODEL_URL
 
-model = None  # 🔥 GLOBAL MODEL
+model = None
 
 
 def load_my_model():
@@ -23,11 +24,11 @@ def load_my_model():
 
         print("🧠 Loading model...")
         model = load_model(
-        MODEL_PATH,
-        compile=False,
-        safe_mode=False, # 🔥 VERY IMPORTANT
-        custom_objects={"BatchNormalization": BatchNormalization}
-    )
+            MODEL_PATH,
+            compile=False,
+            safe_mode=False,
+            custom_objects={"BatchNormalization": BatchNormalization}
+        )
         print("✅ Model loaded")
 
     return model
