@@ -7,6 +7,7 @@ from backend.config import MODEL_PATH, MODEL_URL
 
 model = None  # 🔥 GLOBAL MODEL
 
+
 def load_my_model():
     global model
 
@@ -26,9 +27,10 @@ def load_my_model():
 
     return model
 
+
 def predict_image(file):
     try:
-        model = load_my_model()  # 🔥 LOAD ONLY WHEN NEEDED
+        model = load_my_model()
 
         img = Image.open(file).convert("RGB")
         img = img.resize((299, 299))
