@@ -1,46 +1,32 @@
 import os
 import gdown
-from tensorflow.keras.models import load_model
 import numpy as np
 from PIL import Image
+from tensorflow.keras.models import load_model
+from backend.config import MODEL_PATH, MODEL_URL
 
-MODEL_PATH = "model/final_render_model.h5"
-
-# 🔥 DOWNLOAD MODEL
+# 🔥 DOWNLOAD MODEL IF NOT EXISTS
 if not os.path.exists(MODEL_PATH):
-    print("Downloading model from Drive...")
-
-    url = "https://drive.google.com/uc?id=1gc3nQRwg2tPbdCeH3YKIoAobWTHW3lZ9"
+    print("⬇️ Downloading model...")
     os.makedirs("model", exist_ok=True)
-    gdown.download(url, MODEL_PATH, quiet=False)
-
-    print("Model downloaded ✅")
+    gdown.download(MODEL_URL, MODEL_PATH, quiet=False)
+    print("✅ Model downloaded")
 
 # 🔥 LOAD MODEL
-print("Loading model...")
+print("🚀 Loading model...")
 model = load_model(MODEL_PATH, compile=False)
-print("Model loaded successfully ✅")
+print("✅ Model loaded successfully")
+
 
 def predict_image(file):
     try:
-        print("📸 Opening image...")
-
-        from PIL import Image
-        import numpy as np
-
         img = Image.open(file).convert("RGB")
         img = img.resize((299, 299))
-
-        print("🧠 Preprocessing...")
 
         img = np.array(img) / 255.0
         img = np.expand_dims(img, axis=0)
 
-        print("🤖 Predicting...")
-
         pred = model.predict(img)[0][0]
-
-        print("✅ Prediction:", pred)
 
         return {
             "prediction": "Morph" if pred > 0.5 else "Real",
@@ -50,5 +36,5 @@ def predict_image(file):
         }
 
     except Exception as e:
-        print("🔥 MODEL ERROR:", str(e))
-        raise e
+        print("🔥 ERROR:", str(e))
+        return {"error": str(e)}
