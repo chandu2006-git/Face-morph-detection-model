@@ -22,7 +22,12 @@ def load_my_model():
             print("✅ Model downloaded")
 
         print("🧠 Loading model...")
-        model = load_model(MODEL_PATH, compile=False)
+        model = load_model(
+        MODEL_PATH,
+        compile=False,
+        safe_mode=False  # 🔥 VERY IMPORTANT
+        custom_objects={"BatchNormalization": BatchNormalization}
+    )
         print("✅ Model loaded")
 
     return model
