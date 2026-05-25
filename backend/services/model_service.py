@@ -5,7 +5,7 @@ from PIL import Image
 from tensorflow.keras.models import load_model
 from backend.config import MODEL_PATH, MODEL_URL
 
-model = None  # global model
+model = None
 
 
 def load_my_model():
@@ -22,11 +22,7 @@ def load_my_model():
             print("✅ Model downloaded")
 
         print("🧠 Loading model...")
-        model = load_model(
-            MODEL_PATH,
-            compile=False,
-            safe_mode=False  # 🔥 important for compatibility
-        )
+        model = load_model(MODEL_PATH, compile=False)
         print("✅ Model loaded")
 
     return model
