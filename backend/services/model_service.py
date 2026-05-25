@@ -25,7 +25,7 @@ def load_my_model():
         model = load_model(
         MODEL_PATH,
         compile=False,
-        safe_mode=False  # 🔥 VERY IMPORTANT
+        safe_mode=False, # 🔥 VERY IMPORTANT
         custom_objects={"BatchNormalization": BatchNormalization}
     )
         print("✅ Model loaded")
