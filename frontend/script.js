@@ -1,4 +1,4 @@
-console.log("FULL PIPELINE ACTIVE 🚀");
+console.log("FULL PIPELINE ACTIVE ");
 
 window.onload = () => {
 
@@ -94,7 +94,7 @@ window.onload = () => {
     let mainVal, color;
 
     if (data.prediction === "Morph") {
-      resultLabel.innerText = "MORPH DETECTED ❌";
+      resultLabel.innerText = "MORPH DETECTED ";
       mainVal = morph;
       color = "#ef4444";
     } else {
@@ -117,8 +117,8 @@ window.onload = () => {
     // INSIGHT
     insightText.innerText =
       data.prediction === "Morph"
-        ? "⚠️ Strong morphing patterns detected."
-        : "✅ Image appears authentic with no manipulation.";
+        ? " Strong morphing patterns detected."
+        : " Image appears authentic with no manipulation.";
   }
 
   // ==========================
@@ -147,7 +147,7 @@ function loadAccuracyChart() {
 
   const ctx = canvas.getContext("2d");
 
-  // 🔥 GRADIENTS
+  //  GRADIENTS
   const gradientBlue = ctx.createLinearGradient(0, 0, 0, 300);
   gradientBlue.addColorStop(0, "rgba(59, 130, 246, 0.4)");
   gradientBlue.addColorStop(1, "rgba(59, 130, 246, 0)");
@@ -227,5 +227,5 @@ function loadAccuracyChart() {
     }
   });
 
-  console.log("🔥 Premium Chart Loaded");
+  console.log(" Premium Chart Loaded");
 }

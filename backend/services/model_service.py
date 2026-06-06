@@ -12,18 +12,18 @@ def load_my_model():
     global model
 
     if model is None:
-        print("🚀 Preparing model...")
+        print(" Preparing model...")
 
         os.makedirs(os.path.dirname(MODEL_PATH), exist_ok=True)
 
         if not os.path.exists(MODEL_PATH):
-            print("⬇️ Downloading model...")
+            print("Downloading model...")
             gdown.download(MODEL_URL, MODEL_PATH, quiet=False)
-            print("✅ Model downloaded")
+            print(" Model downloaded")
 
-        print("🧠 Loading model...")
+        print(" Loading model...")
         model = load_model(MODEL_PATH, compile=False)
-        print("✅ Model loaded")
+        print(" Model loaded")
 
     return model
 
@@ -48,5 +48,5 @@ def predict_image(file):
         }
 
     except Exception as e:
-        print("🔥 ERROR:", str(e))
+        print(" ERROR:", str(e))
         return {"error": str(e)}
