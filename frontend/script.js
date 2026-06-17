@@ -175,7 +175,7 @@ analyzeBtn.addEventListener(
 
             const response =
             await fetch(
-                "https://face-morph-detection-model-2.onrender.com/predict",
+                "https://https://face-morph-detection-model.onrender.com/predict",
                 {
                     method:"POST",
                     body:formData
