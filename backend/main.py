@@ -4,10 +4,14 @@ from backend.model_service import predict_image
 
 app = FastAPI(title="MorphGuard API")
 
+origins = [
+    "https://face-morph-detection-model-ymht.vercel.app"
+]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=True,
+    allow_origins=origins,
+    allow_credentials=False,
     allow_methods=["*"],
     allow_headers=["*"],
 )
