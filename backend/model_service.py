@@ -1,6 +1,11 @@
 from backend.model_architecture import build_model
 from PIL import Image
 import numpy as np
+import tensorflow as tf
+
+print("="*50)
+print("TF VERSION:", tf.__version__)
+print("="*50)
 
 MODEL = None
 
@@ -20,7 +25,8 @@ def load_my_model():
         print("DEPLOYMENT MODEL LOAD SUCCESS")
 
     return MODEL
-
+print("MODEL LOADED")
+print("PARAMS:", MODEL.count_params())
 
 def preprocess_image(file):
     img = Image.open(file).convert("RGB")
