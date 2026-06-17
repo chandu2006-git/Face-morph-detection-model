@@ -1,231 +1,405 @@
-console.log("FULL PIPELINE ACTIVE ");
 
-window.onload = () => {
+/* ======================================
+   DOM ELEMENTS
+====================================== */
 
-  let selectedFile = null;
+const imageInput =
+document.getElementById("imageInput");
 
-  const uploadZone = document.getElementById("uploadZone");
-  const fileInput = document.getElementById("fileInput");
-  const analyzeBtn = document.getElementById("analyzeBtn");
+const preview =
+document.getElementById("preview");
 
-  const resultLabel = document.getElementById("resultLabel");
-  const confidenceValue = document.getElementById("confidenceValue");
-  const progressBar = document.getElementById("progressBarFill");
+const analyzeBtn =
+document.getElementById("analyzeBtn");
 
-  const realProb = document.getElementById("realProb");
-  const morphProb = document.getElementById("morphProb");
-  const insightText = document.getElementById("insightText");
-  const steps = document.querySelectorAll(".step-item")
+const predictionText =
+document.getElementById("predictionText");
 
-  
-  // ==========================
-  // UPLOAD
-  // ==========================
-  uploadZone.onclick = () => fileInput.click();
+const predictionIcon =
+document.getElementById("predictionIcon");
 
-  fileInput.onchange = (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
+const confidenceValue =
+document.getElementById("confidenceValue");
 
-    selectedFile = file;
+const confidenceBar =
+document.getElementById("confidenceBar");
 
-    const reader = new FileReader();
-    reader.onload = (ev) => {
-      uploadZone.innerHTML = `
-        <img src="${ev.target.result}" 
-        style="width:100%;height:100%;object-fit:cover;border-radius:12px;" />
-      `;
-    };
-    reader.readAsDataURL(file);
+const realProb =
+document.getElementById("realProb");
 
-    analyzeBtn.disabled = false;
-  };
+const morphProb =
+document.getElementById("morphProb");
 
-  // ==========================
-  // ANALYZE
-  // ==========================
-  analyzeBtn.onclick = async () => {
-  async function animateSteps() {
-  for (let i = 0; i < steps.length; i++) {
-    steps[i].classList.add("active");
-    await new Promise(res => setTimeout(res, 400));
-  }
+const predictionScore =
+document.getElementById("predictionScore");
+
+
+/* ======================================
+   IMAGE PREVIEW
+====================================== */
+
+imageInput.addEventListener(
+    "change",
+    (event) => {
+
+        const file =
+        event.target.files[0];
+
+        if (!file) return;
+
+        preview.src =
+        URL.createObjectURL(file);
+
+        preview.style.display =
+        "block";
     }
-    await animateSteps();
-    if (!selectedFile) {
-      alert("Upload image first");
-      return;
-    }
+);
 
-    analyzeBtn.innerText = "Analyzing...";
-    analyzeBtn.disabled = true;
 
-    try {
-      const formData = new FormData();
-      formData.append("file", selectedFile);
+/* ======================================
+   CONFIDENCE CHART
+====================================== */
 
-      const res = await fetch("https://face-morph-detection-model.onrender.com/predict", {
-        method: "POST",
-        body: formData
-      });
+let confidenceChart;
 
-      const data = await res.json();
-      console.log("API RESPONSE:", data);
+function updateConfidenceChart(
+    confidence
+){
 
-      updateUI(data);
+    const ctx =
+    document
+    .getElementById("confidenceChart")
+    .getContext("2d");
 
-    } catch (err) {
-      console.error(err);
-      alert("Backend error");
+    if(confidenceChart){
+
+        confidenceChart.destroy();
     }
 
-    analyzeBtn.innerText = "Analyze Again";
-    analyzeBtn.disabled = false;
-  };
+    confidenceChart =
+    new Chart(ctx, {
 
-  // ==========================
-  // UPDATE UI
-  // ==========================
-  function updateUI(data) {
+        type:"doughnut",
 
-    const morph = data.morph_prob ?? data.confidence;
-    const real = data.real_prob ?? (1 - morph);
+        data:{
+            datasets:[
+            {
+                data:[
+                    confidence,
+                    100-confidence
+                ],
 
-    let mainVal, color;
+                backgroundColor:[
+                    "#22c55e",
+                    "#ef4444"
+                ],
 
-    if (data.prediction === "Morph") {
-      resultLabel.innerText = "MORPH DETECTED ";
-      mainVal = morph;
-      color = "#ef4444";
-    } else {
-      resultLabel.innerText = "REAL FACE ✅";
-      mainVal = real;
-      color = "#22c55e";
-    }
-
-    // CONFIDENCE
-    animateConfidence(mainVal * 100);
-
-    // BAR
-    progressBar.style.width = (mainVal * 100) + "%";
-    progressBar.style.background = color;
-
-    // PROBABILITIES
-    realProb.innerText = `Real: ${(real * 100).toFixed(2)}%`;
-    morphProb.innerText = `Morph: ${(morph * 100).toFixed(2)}%`;
-
-    // INSIGHT
-    insightText.innerText =
-      data.prediction === "Morph"
-        ? " Strong morphing patterns detected."
-        : " Image appears authentic with no manipulation.";
-  }
-
-  // ==========================
-  // ANIMATION
-  // ==========================
-  function animateConfidence(target) {
-    let current = 0;
-
-    const interval = setInterval(() => {
-      current += target / 30;
-
-      if (current >= target) {
-        current = target;
-        clearInterval(interval);
-      }
-
-      confidenceValue.innerText = current.toFixed(1) + "%";
-    }, 25);
-  }
-  loadAccuracyChart();
-};
-function loadAccuracyChart() {
-
-  const canvas = document.getElementById("accuracyChart");
-  if (!canvas) return;
-
-  const ctx = canvas.getContext("2d");
-
-  //  GRADIENTS
-  const gradientBlue = ctx.createLinearGradient(0, 0, 0, 300);
-  gradientBlue.addColorStop(0, "rgba(59, 130, 246, 0.4)");
-  gradientBlue.addColorStop(1, "rgba(59, 130, 246, 0)");
-
-  const gradientOrange = ctx.createLinearGradient(0, 0, 0, 300);
-  gradientOrange.addColorStop(0, "rgba(249, 115, 22, 0.4)");
-  gradientOrange.addColorStop(1, "rgba(249, 115, 22, 0)");
-
-  new Chart(ctx, {
-    type: "line",
-    data: {
-      labels: ["Epoch 1", "Epoch 2", "Epoch 3", "Epoch 4", "Epoch 5", "Epoch 6"],
-      datasets: [
-        {
-          label: "Train Accuracy",
-          data: [0.43, 0.91, 0.94, 0.95, 0.955, 0.96],
-          borderColor: "#3b82f6",
-          backgroundColor: gradientBlue,
-          fill: true,
-          tension: 0.4,
-          borderWidth: 3,
-          pointRadius: 4,
-          pointHoverRadius: 6
+                borderWidth:0
+            }]
         },
-        {
-          label: "Validation Accuracy",
-          data: [0.92, 0.92, 0.935, 0.95, 0.96, 0.965],
-          borderColor: "#f97316",
-          backgroundColor: gradientOrange,
-          fill: true,
-          tension: 0.4,
-          borderWidth: 3,
-          pointRadius: 4,
-          pointHoverRadius: 6
-        }
-      ]
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
 
-      animation: {
-        duration: 1500,
-        easing: "easeOutQuart"
-      },
+        options:{
 
-      plugins: {
-        legend: {
-          labels: {
-            color: "#374151",
-            font: {
-              size: 12,
-              weight: "600"
+            responsive:true,
+
+            cutout:"72%",
+
+            plugins:{
+                legend:{
+                    display:false
+                },
+
+                tooltip:{
+                    enabled:false
+                }
             }
-          }
         }
-      },
-
-      scales: {
-        x: {
-          ticks: {
-            color: "#6B7280"
-          },
-          grid: {
-            color: "rgba(0,0,0,0.05)"
-          }
-        },
-        y: {
-          ticks: {
-            color: "#6B7280"
-          },
-          grid: {
-            color: "rgba(0,0,0,0.05)"
-          }
-        }
-      }
-    }
-  });
-
-  console.log(" Premium Chart Loaded");
+    });
 }
+
+
+/* ======================================
+   PROCESSING ANIMATION
+====================================== */
+
+async function fakeProcessing(){
+
+    predictionText.innerHTML =
+    "Analyzing...";
+
+    predictionIcon.innerHTML =
+    "⏳";
+
+    await new Promise(
+        r => setTimeout(r,600)
+    );
+}
+
+
+/* ======================================
+   API CALL
+====================================== */
+
+analyzeBtn.addEventListener(
+    "click",
+    async () => {
+
+        const file =
+        imageInput.files[0];
+
+        if(!file){
+
+            alert(
+                "Please upload an image."
+            );
+
+            return;
+        }
+
+        analyzeBtn.disabled = true;
+
+        analyzeBtn.innerHTML =
+        "Analyzing...";
+
+        await fakeProcessing();
+
+        try{
+
+            const formData =
+            new FormData();
+
+            formData.append(
+                "file",
+                file
+            );
+
+            const response =
+            await fetch(
+                "http://127.0.0.1:8000/predict",
+                {
+                    method:"POST",
+                    body:formData
+                }
+            );
+
+            const data =
+            await response.json();
+
+            updateDashboard(data);
+
+        }
+        catch(error){
+
+            console.error(error);
+
+            predictionText.innerHTML =
+            "Prediction Failed";
+
+            predictionIcon.innerHTML =
+            "❌";
+        }
+
+        analyzeBtn.disabled = false;
+
+        analyzeBtn.innerHTML =
+        "Analyze Again";
+    }
+);
+
+
+/* ======================================
+   DASHBOARD UPDATE
+====================================== */
+
+function updateDashboard(data){
+
+    const label =
+    data.label;
+
+    const confidence =
+    Number(data.confidence);
+
+    const real =
+    Number(data.real_probability);
+
+    const morph =
+    Number(data.morph_probability);
+
+    const raw =
+    Number(data.raw_prediction);
+
+
+    /* -------------------------
+       RESULT STATUS
+    ------------------------- */
+
+    if(label === "REAL"){
+
+        predictionText.innerHTML =
+        "REAL DETECTED";
+
+        predictionText.style.color =
+        "#16a34a";
+
+        predictionIcon.innerHTML =
+        "✅";
+
+        confidenceBar.style.background =
+        "#22c55e";
+    }
+
+    else{
+
+        predictionText.innerHTML =
+        "MORPH DETECTED";
+
+        predictionText.style.color =
+        "#ef4444";
+
+        predictionIcon.innerHTML =
+        "⚠️";
+
+        confidenceBar.style.background =
+        "#ef4444";
+    }
+
+
+    /* -------------------------
+       CONFIDENCE
+    ------------------------- */
+
+    confidenceValue.innerHTML =
+    confidence.toFixed(2) + "%";
+
+    confidenceBar.style.width =
+    confidence + "%";
+
+
+    /* -------------------------
+       PROBABILITIES
+    ------------------------- */
+
+    realProb.innerHTML =
+    real.toFixed(2) + "%";
+
+    morphProb.innerHTML =
+    morph.toFixed(2) + "%";
+
+
+    /* -------------------------
+       RAW SCORE
+    ------------------------- */
+
+    predictionScore.innerHTML =
+    raw.toFixed(6);
+
+
+    /* -------------------------
+       CHART
+    ------------------------- */
+
+    updateConfidenceChart(
+        confidence
+    );
+}
+
+
+/* ======================================
+   ACCURACY CHART
+====================================== */
+
+const accuracyCtx =
+document
+.getElementById("accuracyChart")
+.getContext("2d");
+
+new Chart(accuracyCtx,{
+
+    type:"line",
+
+    data:{
+
+        labels:[
+            "Epoch 1",
+            "Epoch 2",
+            "Epoch 3",
+            "Epoch 4",
+            "Epoch 5",
+            "Epoch 6"
+        ],
+
+        datasets:[
+
+            {
+
+                label:
+                "Train Accuracy",
+
+                data:[
+                    0.43,
+                    0.91,
+                    0.94,
+                    0.95,
+                    0.96,
+                    0.97
+                ],
+
+                borderColor:
+                "#3b82f6",
+
+                backgroundColor:
+                "rgba(59,130,246,.15)",
+
+                tension:0.4,
+
+                fill:true
+            },
+
+            {
+
+                label:
+                "Validation Accuracy",
+
+                data:[
+                    0.90,
+                    0.90,
+                    0.93,
+                    0.94,
+                    0.95,
+                    0.96
+                ],
+
+                borderColor:
+                "#f97316",
+
+                backgroundColor:
+                "rgba(249,115,22,.12)",
+
+                tension:0.4,
+
+                fill:true
+            }
+        ]
+    },
+
+    options:{
+
+        responsive:true,
+
+        maintainAspectRatio:false,
+
+        plugins:{
+            legend:{
+                display:true
+            }
+        }
+    }
+});
+
+
+/* ======================================
+   INITIAL STATE
+====================================== */
+
+updateConfidenceChart(0);
+

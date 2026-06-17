@@ -1,392 +1,436 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>MorphGuard – Face Morph Detection</title>
-  <link rel="stylesheet" href="style.css" />
-  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
-  <script src="script.js" defer></script>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>MorphGuard - Face Morph Detection</title>
+
+    <link rel="stylesheet" href="style.css">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 </head>
+
 <body>
-  <!-- ===== HEADER ===== -->
-  <header class="header">
-    <div class="header-brand">
-      <div class="brand-logo">
-        <svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M16 2L4 8v8c0 7.18 5.16 13.9 12 15.93C23.84 29.9 29 23.18 29 16V8L16 2z" fill="#4F46E5" fill-opacity="0.15" stroke="#4F46E5" stroke-width="1.5"/>
-          <circle cx="16" cy="14" r="5" stroke="#4F46E5" stroke-width="1.5" fill="none"/>
-          <path d="M10 22c1.5-2.5 3.5-4 6-4s4.5 1.5 6 4" stroke="#4F46E5" stroke-width="1.5" stroke-linecap="round"/>
-        </svg>
-      </div>
-      <div class="brand-text">
-        <span class="brand-name">MorphGuard</span>
-        <span class="brand-sub">AI-Powered Face Morph Detection</span>
-      </div>
-    </div>
 
-    <div class="header-center">
-      <h1 class="header-title">Face Morph Detection</h1>
-      <p class="header-subtitle">Accurate &bull; Reliable &bull; Intelligent</p>
-    </div>
+    <!-- ========================================= -->
+    <!-- HEADER -->
+    <!-- ========================================= -->
 
-    <div class="header-right">
-      <div class="status-badge">
-        <span class="status-dot"></span>
-        System Active
-      </div>
-      
-    </div>
-  </header>
+    <header>
 
-  <!-- ===== MAIN GRID ===== -->
-  <main class="main-grid">
+        <div class="logo-section">
 
-    <!-- LEFT: INPUT PANEL -->
-    <section class="panel panel-input">
-      <div class="panel-header">
-        <span class="panel-icon">
-          <svg viewBox="0 0 20 20" fill="none"><rect x="2" y="2" width="16" height="16" rx="3" stroke="currentColor" stroke-width="1.5"/><circle cx="7" cy="7" r="1.5" fill="currentColor"/><path d="M2 13l4-4 3 3 3-3 6 5" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg>
-        </span>
-        <h2 class="panel-title">INPUT IMAGE</h2>
-      </div>
-
-      <div class="upload-zone" id="uploadZone">
-        <input type="file" id="fileInput" accept="image/*" hidden />
-        <div class="upload-icon">
-          <svg viewBox="0 0 48 48" fill="none"><path d="M24 32V16M24 16L18 22M24 16L30 22" stroke="#4F46E5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M8 36c0 2.21 1.79 4 4 4h24c2.21 0 4-1.79 4-4" stroke="#4F46E5" stroke-width="2" stroke-linecap="round"/></svg>
-        </div>
-        <p class="upload-label">Click or drag &amp; drop</p>
-        <p class="upload-hint">PNG, JPG, JPEG (Max 10MB)</p>
-        <img id="imagePreview" class="image-preview hidden" alt="Preview" />
-      </div>
-
-      <div class="file-info hidden" id="fileInfo">
-        <div class="file-info-inner">
-          <svg viewBox="0 0 20 20" fill="none" class="file-icon"><path d="M4 3h8l4 4v10a1 1 0 01-1 1H5a1 1 0 01-1-1V4a1 1 0 011-1z" stroke="#6B7280" stroke-width="1.2"/><path d="M12 3v4h4" stroke="#6B7280" stroke-width="1.2"/></svg>
-          <div class="file-details">
-            <span id="fileName" class="file-name">—</span>
-            <span id="fileSize" class="file-size">—</span>
-          </div>
-          <svg viewBox="0 0 20 20" fill="none" class="file-check"><circle cx="10" cy="10" r="8" stroke="#22C55E" stroke-width="1.5"/><path d="M7 10l2 2 4-4" stroke="#22C55E" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        </div>
-      </div>
-
-      <button class="analyze-btn" id="analyzeBtn" disabled>
-      <svg viewBox="0 0 20 20" fill="none"><path d="M10 2a8 8 0 100 16A8 8 0 0010 2z" stroke="currentColor" stroke-width="1.5"/><path d="M7 10l2 2 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        Analyze Image
-      </button>
-
-      <div class="input-tip">
-        <svg viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6" stroke="#F59E0B" stroke-width="1.2"/><path d="M8 7v4M8 5.5v.5" stroke="#F59E0B" stroke-width="1.2" stroke-linecap="round"/></svg>
-        Tip: Upload a clear front-facing face image for best results.
-      </div>
-    </section>
-
-    <!-- CENTER: RESULT PANEL -->
-    <section class="panel panel-result">
-      <div class="panel-header">
-        <span class="panel-icon">
-          <svg viewBox="0 0 20 20" fill="none"><path d="M10 2l2.4 5.6H18l-4.8 3.4 1.8 5.6L10 13.1 5 16.6l1.8-5.6L2 7.6h5.6L10 2z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg>
-        </span>
-        <h2 class="panel-title">PREDICTION RESULT</h2>
-      </div>
-
-      <!-- Result Hero -->
-      <div class="result-flex">
-
-      <!-- LEFT SIDE -->
-      <div class="result-left">
-
-        <div class="result-label" id="resultLabel">Awaiting Analysis</div>
-
-        <div class="confidence-section">
-          <div class="confidence-value" id="confidenceValue">—</div>
-
-          <div class="progress-bar-track">
-            <div class="progress-bar-fill" id="progressBarFill"></div>
-          </div>
-        </div>
-
-        <div class="probability-cards">
-          <div class="prob-card">
-            <span>Real: <span id="realProb">—</span></span>
-          </div>
-
-          <div class="prob-card">
-            <span>Morph: <span id="morphProb">—</span></span>
-          </div>
-        </div>
-
-      </div>
-
-      <!-- RIGHT SIDE -->
-      <div class="result-right">
-        <canvas id="donutChart"></canvas>
-
-        <div class="chart-center-text">
-          <span id="donutPercent">0%</span>
-          <span class="chart-label">Confidence</span>
-        </div>
-      </div>
-
-    </div>
-      <!-- Confidence Score -->
-      <div class="confidence-section">
-        <div class="confidence-label">Prediction score</div>
-        <div class="confidence-value" id="confidenceValue">—</div>
-        <div class="progress-bar-track">
-          <div class="progress-bar-fill" id="progressBarFill"></div>
-        </div>
-      </div>
-
-      <!-- Probability Cards -->
-      <div class="probability-cards">
-        <div class="prob-card">
-          <div class="prob-card-icon real-icon">
-            <svg viewBox="0 0 20 20" fill="none"><circle cx="10" cy="7" r="3" stroke="#22C55E" stroke-width="1.5"/><path d="M4 17c0-3.31 2.69-6 6-6s6 2.69 6 6" stroke="#22C55E" stroke-width="1.5" stroke-linecap="round"/></svg>
-          </div>
-          <div class="prob-card-info">
-            <span class="prob-card-label">Real Face Probability</span>
-            <span class="prob-card-value real-value" id="realProb">—</span>
-          </div>
-        </div>
-        <div class="prob-card">
-          <div class="prob-card-icon morph-icon">
-            <svg viewBox="0 0 20 20" fill="none"><path d="M10 3l2 4h4l-3 3 1 4-4-2-4 2 1-4-3-3h4L10 3z" stroke="#EF4444" stroke-width="1.3" stroke-linejoin="round"/></svg>
-          </div>
-          <div class="prob-card-info">
-            <span class="prob-card-label">Morph Face Probability</span>
-            <span class="prob-card-value morph-value" id="morphProb">—</span>
-          </div>
-        </div>
-      </div>
-
-      <!-- Insight -->
-      <div class="insight-box" id="insightBox">
-        <svg viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="1.2"/><path d="M8 7v4M8 5.5v.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
-        <span id="insightText">Run analysis to see model insights.</span>
-      </div>
-    </section>
-
-    <!-- RIGHT: PROCESSING PANEL -->
-    <section class="panel panel-processing">
-      <div class="panel-header">
-        <span class="panel-icon">
-          <svg viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="3" stroke="currentColor" stroke-width="1.5"/><path d="M10 2v2M10 16v2M2 10h2M16 10h2M4.22 4.22l1.42 1.42M14.36 14.36l1.42 1.42M4.22 15.78l1.42-1.42M14.36 5.64l1.42-1.42" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
-        </span>
-        <h2 class="panel-title">PROCESSING STEPS</h2>
-      </div>
-
-      <div class="steps-list" id="stepsList">
-        <div class="step-item" data-step="0">
-          <div class="step-indicator">
-            <div class="step-icon-wrap">
-              <svg class="step-icon" viewBox="0 0 20 20" fill="none"><rect x="2" y="2" width="16" height="16" rx="3" stroke="currentColor" stroke-width="1.5"/><circle cx="10" cy="9" r="3" stroke="currentColor" stroke-width="1.2"/><path d="M5 16c.9-2 2.7-3 5-3s4.1 1 5 3" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+            <div class="logo-icon">
+                🛡️
             </div>
-            <div class="step-connector"></div>
-          </div>
-          <div class="step-content">
-            <div class="step-top">
-              <span class="step-name">Face Detection</span>
-              <span class="step-status" id="stepStatus0"></span>
+
+            <div>
+                <h2>MorphGuard</h2>
+                <p>AI-Powered Face Morph Detection</p>
             </div>
-            <div class="step-desc">Locating facial landmarks</div>
-            <div class="step-time" id="stepTime0"></div>
-          </div>
+
         </div>
 
-        <div class="step-item" data-step="1">
-          <div class="step-indicator">
-            <div class="step-icon-wrap">
-              <svg class="step-icon" viewBox="0 0 20 20" fill="none"><rect x="2" y="2" width="7" height="7" rx="1.5" stroke="currentColor" stroke-width="1.3"/><rect x="11" y="2" width="7" height="7" rx="1.5" stroke="currentColor" stroke-width="1.3"/><rect x="2" y="11" width="7" height="7" rx="1.5" stroke="currentColor" stroke-width="1.3"/><rect x="11" y="11" width="7" height="7" rx="1.5" stroke="currentColor" stroke-width="1.3"/></svg>
+        <div class="header-title">
+
+            <h1>Face Morph Detection</h1>
+
+            <p>
+                Accurate • Reliable • Intelligent
+            </p>
+
+        </div>
+
+        <div class="system-status">
+
+            <span class="status-dot"></span>
+
+            System Active
+
+        </div>
+
+    </header>
+
+
+
+    <!-- ========================================= -->
+    <!-- MAIN CONTAINER -->
+    <!-- ========================================= -->
+
+    <main>
+
+        <!-- ===================================== -->
+        <!-- TOP GRID -->
+        <!-- ===================================== -->
+
+        <section class="top-grid">
+
+            <!-- ================================= -->
+            <!-- INPUT CARD -->
+            <!-- ================================= -->
+
+            <div class="card input-card">
+
+                <div class="section-title">
+
+                    INPUT IMAGE
+
+                </div>
+
+                <div class="upload-container">
+
+                    <input
+                        type="file"
+                        id="imageInput"
+                        accept="image/*"
+                    >
+
+                    <div class="image-preview">
+
+                        <img
+                            id="preview"
+                            src=""
+                            alt="Preview"
+                        >
+
+                    </div>
+
+                </div>
+
+                <button id="analyzeBtn">
+
+                    Analyze Image
+
+                </button>
+
+                <div class="tip-box">
+
+                    Tip: Upload a clear front-facing image for best results.
+
+                </div>
+
             </div>
-            <div class="step-connector"></div>
-          </div>
-          <div class="step-content">
-            <div class="step-top">
-              <span class="step-name">Feature Extraction</span>
-              <span class="step-status" id="stepStatus1"></span>
+
+
+
+            <!-- ================================= -->
+            <!-- PREDICTION CARD -->
+            <!-- ================================= -->
+
+            <div class="card prediction-card">
+
+                <div class="section-title">
+
+                    PREDICTION RESULT
+
+                </div>
+
+                <div class="prediction-layout">
+
+                    <!-- Result Status -->
+
+                    <div class="status-card">
+
+                        <div id="predictionIcon">
+
+                            🔍
+
+                        </div>
+
+                        <h2 id="predictionText">
+
+                            Awaiting Analysis
+
+                        </h2>
+
+                        <p>
+
+                            Upload and analyze an image to see results.
+
+                        </p>
+
+                    </div>
+
+
+                    <!-- Confidence Circle -->
+
+                    <div class="confidence-circle-card">
+
+                        <canvas
+                            id="confidenceChart"
+                            width="180"
+                            height="180">
+                        </canvas>
+
+                    </div>
+
+
+                    <!-- Score -->
+
+                    <div class="score-card">
+
+                        <span>
+
+                            Prediction Score
+
+                        </span>
+
+                        <h2 id="confidenceValue">
+
+                            0%
+
+                        </h2>
+
+                        <div class="score-progress">
+
+                            <div id="confidenceBar">
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- Probability Boxes -->
+
+                <div class="probability-row">
+
+                    <div class="probability-card real-box">
+
+                        <span>
+
+                            Real Face Probability
+
+                        </span>
+
+                        <h2 id="realProb">
+
+                            --
+
+                        </h2>
+
+                    </div>
+
+                    <div class="probability-card morph-box">
+
+                        <span>
+
+                            Morph Face Probability
+
+                        </span>
+
+                        <h2 id="morphProb">
+
+                            --
+
+                        </h2>
+
+                    </div>
+
+                </div>
+
+                <div class="prediction-score-box">
+
+                    Raw Prediction Score:
+                    <span id="predictionScore">
+
+                        --
+
+                    </span>
+
+                </div>
+
             </div>
-            <div class="step-desc">Extracting deep features</div>
-            <div class="step-time" id="stepTime1"></div>
-          </div>
-        </div>
 
-        <div class="step-item" data-step="2">
-          <div class="step-indicator">
-            <div class="step-icon-wrap">
-              <svg class="step-icon" viewBox="0 0 20 20" fill="none"><polyline points="2,14 6,9 10,12 14,6 18,9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>
+
+
+            <!-- ================================= -->
+            <!-- PROCESSING STEPS -->
+            <!-- ================================= -->
+
+            <div class="card steps-card">
+
+                <div class="section-title">
+
+                    PROCESSING STEPS
+
+                </div>
+
+                <div class="step">
+
+                    <div class="step-icon">📷</div>
+
+                    <div>
+
+                        <h4>Face Detection</h4>
+
+                        <p>Locating facial landmarks</p>
+
+                    </div>
+
+                </div>
+
+                <div class="step">
+
+                    <div class="step-icon">🧠</div>
+
+                    <div>
+
+                        <h4>Feature Extraction</h4>
+
+                        <p>Extracting deep features</p>
+
+                    </div>
+
+                </div>
+
+                <div class="step">
+
+                    <div class="step-icon">📊</div>
+
+                    <div>
+
+                        <h4>Pattern Analysis</h4>
+
+                        <p>Analyzing morphing patterns</p>
+
+                    </div>
+
+                </div>
+
+                <div class="step">
+
+                    <div class="step-icon">✅</div>
+
+                    <div>
+
+                        <h4>Morph Classification</h4>
+
+                        <p>Final prediction processing</p>
+
+                    </div>
+
+                </div>
+
             </div>
-            <div class="step-connector"></div>
-          </div>
-          <div class="step-content">
-            <div class="step-top">
-              <span class="step-name">Pattern Analysis</span>
-              <span class="step-status" id="stepStatus2"></span>
+
+        </section>
+
+
+
+        <!-- ===================================== -->
+        <!-- BOTTOM GRID -->
+        <!-- ===================================== -->
+
+        <section class="bottom-grid">
+
+            <!-- Graph -->
+
+            <div class="card graph-card">
+
+                <div class="section-title">
+
+                    MODEL ACCURACY OVER EPOCHS
+
+                </div>
+
+                <canvas id="accuracyChart">
+
+                </canvas>
+
+                <div class="graph-note">
+
+                    Steady improvement in accuracy with minimal overfitting.
+
+                </div>
+
             </div>
-            <div class="step-desc">Analyzing morphing patterns</div>
-            <div class="step-time" id="stepTime2"></div>
-          </div>
-        </div>
 
-        <div class="step-item" data-step="3">
-          <div class="step-indicator">
-            <div class="step-icon-wrap">
-              <svg class="step-icon" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="7" stroke="currentColor" stroke-width="1.3"/><path d="M7 10c0-1.66 1.34-3 3-3s3 1.34 3 3-1.34 3-3 3" stroke="currentColor" stroke-width="1.2"/><circle cx="10" cy="10" r="1" fill="currentColor"/></svg>
+
+
+            <!-- Model Details -->
+
+            <div class="card model-details-card">
+
+                <div class="section-title">
+
+                    MODEL DETAILS & INFORMATION
+
+                </div>
+
+                <div class="details-grid">
+
+                    <div class="metric-card">
+                        <span>Model Architecture</span>
+                        <h3>InceptionV3</h3>
+                    </div>
+
+                    <div class="metric-card">
+                        <span>Accuracy</span>
+                        <h3>97.44%</h3>
+                    </div>
+
+                    <div class="metric-card">
+                        <span>Total Images</span>
+                        <h3>2348</h3>
+                    </div>
+
+                    <div class="metric-card">
+                        <span>Dataset</span>
+                        <h3>Real vs Morph</h3>
+                    </div>
+
+                    <div class="metric-card">
+                        <span>Training Epochs</span>
+                        <h3>6</h3>
+                    </div>
+
+                    <div class="metric-card">
+                        <span>AUC Score</span>
+                        <h3>0.974</h3>
+                    </div>
+
+                    <div class="metric-card">
+                        <span>Input Size</span>
+                        <h3>224 × 224</h3>
+                    </div>
+
+                    <div class="metric-card">
+                        <span>Optimizer</span>
+                        <h3>Adam</h3>
+                    </div>
+
+                </div>
+
+                <div class="model-note">
+
+                    Model is well-trained and performing with high precision and strong generalization.
+
+                </div>
+
             </div>
-          </div>
-          <div class="step-content">
-            <div class="step-top">
-              <span class="step-name">Morph Classification</span>
-              <span class="step-status" id="stepStatus3"></span>
-            </div>
-            <div class="step-desc">Final prediction processing</div>
-            <div class="step-time" id="stepTime3"></div>
-          </div>
-        </div>
-      </div>
 
-      <div class="analysis-complete hidden" id="analysisComplete">
-        <svg viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="8" fill="#4F46E5" fill-opacity="0.1"/><circle cx="10" cy="10" r="8" stroke="#4F46E5" stroke-width="1.5"/><path d="M7 10l2 2 4-4" stroke="#4F46E5" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        Analysis Completed Successfully
-      </div>
-    </section>
-  </main>
+        </section>
 
-  <!-- ===== BOTTOM SECTION ===== -->
-  <div class="bottom-grid">
+    </main>
 
-    <!-- Accuracy Chart -->
-    <section class="panel panel-chart">
-      <div class="panel-header">
-        <span class="panel-icon">
-          <svg viewBox="0 0 20 20" fill="none"><polyline points="2,15 6,9 10,12 14,5 18,8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>
-        </span>
-        <h2 class="panel-title">MODEL ACCURACY OVER EPOCHS</h2>
-      </div>
-      <div class="chart-wrapper">
-        <canvas id="accuracyChart"></canvas>
-      </div>
-      <div class="chart-note">
-        <svg viewBox="0 0 16 16" fill="none"><polyline points="1,12 5,7 9,9 13,4 15,6" stroke="#4F46E5" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>
-        Steady improvement in accuracy with minimal overfitting.
-      </div>
-    </section>
-
-    <!-- Model Info -->
-    <section class="panel panel-model">
-      <div class="panel-header">
-        <span class="panel-icon">
-          <svg viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="7" stroke="currentColor" stroke-width="1.5"/><path d="M10 6v4l2 2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
-        </span>
-        <h2 class="panel-title">MODEL DETAILS &amp; INFORMATION</h2>
-      </div>
-
-      <div class="model-info-grid">
-        <div class="model-info-item">
-          <div class="model-info-icon" style="background:#EEF2FF">
-            <svg viewBox="0 0 20 20" fill="none"><circle cx="6" cy="10" r="3" stroke="#4F46E5" stroke-width="1.3"/><circle cx="14" cy="6" r="3" stroke="#4F46E5" stroke-width="1.3"/><circle cx="14" cy="14" r="3" stroke="#4F46E5" stroke-width="1.3"/><path d="M9 10h2M11 7l1 1M11 13l1-1" stroke="#4F46E5" stroke-width="1.2" stroke-linecap="round"/></svg>
-          </div>
-          <div class="model-info-text">
-            <span class="model-info-label">Model Architecture</span>
-            <span class="model-info-value accent">InceptionV3</span>
-          </div>
-        </div>
-
-        <div class="model-info-item">
-          <div class="model-info-icon" style="background:#F0FDF4">
-            <svg viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="7" stroke="#22C55E" stroke-width="1.3"/><path d="M7 10l2 2 4-4" stroke="#22C55E" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          </div>
-          <div class="model-info-text">
-            <span class="model-info-label">Accuracy</span>
-            <span class="model-info-value" style="color:#22C55E">97.44%</span>
-          </div>
-        </div>
-
-        <div class="model-info-item">
-          <div class="model-info-icon" style="background:#FFF7ED">
-            <svg viewBox="0 0 20 20" fill="none"><polyline points="2,15 6,8 10,11 14,4 18,7" stroke="#F97316" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>
-          </div>
-          <div class="model-info-text">
-            <span class="model-info-label">AUC Score</span>
-            <span class="model-info-value" style="color:#F97316">0.974</span>
-          </div>
-        </div>
-
-        <div class="model-info-item">
-          <div class="model-info-icon" style="background:#FFFBEB">
-            <svg viewBox="0 0 20 20" fill="none"><ellipse cx="10" cy="15" rx="7" ry="2.5" stroke="#F59E0B" stroke-width="1.3"/><ellipse cx="10" cy="10" rx="7" ry="2.5" stroke="#F59E0B" stroke-width="1.3"/><path d="M3 10v5M17 10v5" stroke="#F59E0B" stroke-width="1.3"/><ellipse cx="10" cy="5" rx="7" ry="2.5" stroke="#F59E0B" stroke-width="1.3"/><path d="M3 5v5M17 5v5" stroke="#F59E0B" stroke-width="1.3"/></svg>
-          </div>
-          <div class="model-info-text">
-            <span class="model-info-label">Total Images</span>
-            <span class="model-info-value" style="color:#F59E0B">12,000+</span>
-          </div>
-        </div>
-
-        <div class="model-info-item">
-          <div class="model-info-icon" style="background:#F0FDF4">
-            <svg viewBox="0 0 20 20" fill="none"><rect x="3" y="3" width="14" height="14" rx="2" stroke="#22C55E" stroke-width="1.3"/><path d="M7 10h6M10 7v6" stroke="#22C55E" stroke-width="1.3" stroke-linecap="round"/></svg>
-          </div>
-          <div class="model-info-text">
-            <span class="model-info-label">Dataset</span>
-            <span class="model-info-value" style="color:#22C55E">Real vs Morph</span>
-          </div>
-        </div>
-
-        <div class="model-info-item">
-          <div class="model-info-icon" style="background:#FDF2F8">
-            <svg viewBox="0 0 20 20" fill="none"><rect x="3" y="3" width="14" height="14" rx="2" stroke="#EC4899" stroke-width="1.3"/><path d="M7 7h6M7 10h6M7 13h4" stroke="#EC4899" stroke-width="1.2" stroke-linecap="round"/></svg>
-          </div>
-          <div class="model-info-text">
-            <span class="model-info-label">Input Size</span>
-            <span class="model-info-value" style="color:#EC4899">299 x 299</span>
-          </div>
-        </div>
-
-        <div class="model-info-item">
-          <div class="model-info-icon" style="background:#EFF6FF">
-            <svg viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="7" stroke="#3B82F6" stroke-width="1.3"/><path d="M10 7v3l2 1" stroke="#3B82F6" stroke-width="1.3" stroke-linecap="round"/></svg>
-          </div>
-          <div class="model-info-text">
-            <span class="model-info-label">Training Epochs</span>
-            <span class="model-info-value" style="color:#3B82F6">50</span>
-          </div>
-        </div>
-
-        <div class="model-info-item">
-          <div class="model-info-icon" style="background:#FFF7ED">
-            <svg viewBox="0 0 20 20" fill="none"><path d="M10 3l2 5h5l-4 3 2 5-5-3-5 3 2-5-4-3h5L10 3z" stroke="#F97316" stroke-width="1.3" stroke-linejoin="round" fill="none"/></svg>
-          </div>
-          <div class="model-info-text">
-            <span class="model-info-label">Optimizer</span>
-            <span class="model-info-value" style="color:#F97316">Adam</span>
-          </div>
-        </div>
-
-        <div class="model-info-item">
-          <div class="model-info-icon" style="background:#FEF2F2">
-            <svg viewBox="0 0 20 20" fill="none"><path d="M4 4h12M4 8h8M4 12h12M4 16h6" stroke="#EF4444" stroke-width="1.3" stroke-linecap="round"/></svg>
-          </div>
-          <div class="model-info-text">
-            <span class="model-info-label">Loss Function</span>
-            <span class="model-info-value" style="color:#EF4444">Binary Crossentropy</span>
-          </div>
-        </div>
-      </div>
-
-      <div class="model-note">
-        <svg viewBox="0 0 16 16" fill="none"><polygon points="8,2 10,6 14,6.5 11,9.5 11.5,14 8,12 4.5,14 5,9.5 2,6.5 6,6" stroke="#F59E0B" stroke-width="1.2" fill="none"/></svg>
-        Model is well-trained and performing with high precision and generalization.
-      </div>
-    </section>
-  </div>
-
-  <footer class="footer">
-    &copy; 2025 MorphGuard. All rights reserved.
-  </footer>
-
+    <script src="script.js"></script>
 
 </body>
+
 </html>
+
