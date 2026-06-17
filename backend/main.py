@@ -4,10 +4,6 @@ from backend.model_service import predict_image
 
 app = FastAPI(title="MorphGuard API")
 
-origins = [
-    "https://face-morph-detection-model-2.onrender.com/"
-]
-
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,
