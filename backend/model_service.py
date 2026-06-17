@@ -1,11 +1,11 @@
-from backend.model_architecture import build_model
+from tensorflow.keras.models import load_model
 from PIL import Image
 import numpy as np
 import tensorflow as tf
 
-print("="*50)
-print("TF VERSION:", tf.__version__)
-print("="*50)
+print("=" * 60)
+print("TensorFlow Version:", tf.__version__)
+print("=" * 60)
 
 MODEL = None
 
@@ -14,26 +14,27 @@ def load_my_model():
     global MODEL
 
     if MODEL is None:
+
         print("Loading deployment model...")
 
-        MODEL = build_model()
-
-        MODEL.load_weights(
-            "model/inception_weights_v2.weights.h5"
+        MODEL = load_model(
+            "model/final_deployment_model.keras",
+            compile=False
         )
 
-        print("DEPLOYMENT MODEL LOAD SUCCESS")
+        print("MODEL LOADED SUCCESSFULLY")
+        print("MODEL PARAMETERS:", MODEL.count_params())
 
     return MODEL
-print("MODEL LOADED")
-print("PARAMS:", MODEL.count_params())
+
 
 def preprocess_image(file):
+
     img = Image.open(file).convert("RGB")
 
     img = img.resize((224, 224))
 
-    img = np.array(img)
+    img = np.array(img, dtype=np.float32)
 
     img = img / 255.0
 
@@ -48,22 +49,42 @@ def predict_image(file):
 
     image = preprocess_image(file)
 
-    prediction = model.predict(image)[0][0]
+    print("=" * 60)
+    print("IMAGE SHAPE :", image.shape)
+    print("IMAGE MIN   :", np.min(image))
+    print("IMAGE MAX   :", np.max(image))
+    print("=" * 60)
+
+    prediction = model.predict(
+        image,
+        verbose=0
+    )[0][0]
+
+    print("=" * 60)
+    print("RAW PREDICTION :", float(prediction))
+    print("=" * 60)
 
     real_prob = float(prediction)
     morph_prob = float(1 - prediction)
 
-    if prediction >= 0.5:
+    if prediction > 0.5:
+
         label = "REAL"
         confidence = real_prob * 100
+
     else:
+
         label = "MORPH"
         confidence = morph_prob * 100
 
-    return {
+    result = {
         "label": label,
         "confidence": round(confidence, 2),
         "real_probability": round(real_prob * 100, 2),
         "morph_probability": round(morph_prob * 100, 2),
         "raw_prediction": float(prediction)
     }
+
+    print("RESULT:", result)
+
+    return result
